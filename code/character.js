@@ -45,6 +45,9 @@ Mario.Character = function() {
     this.LastFire = false;
     this.NewLarge = false;
     this.NewFire = false;
+
+    //Score
+    this.Score = 0;
 };
 
 Mario.Character.prototype = new Mario.NotchSprite(null);
@@ -536,6 +539,7 @@ Mario.Character.prototype.Stomp = function(object) {
     if (object instanceof Mario.Enemy || object instanceof Mario.BulletBill) {
         
         Enjine.Resources.PlaySound("kick");
+        this.Score += 100;
         this.XJumpSpeed = 0;
         this.YJumpSpeed = -1.9;
         this.JumpTime = 8;
@@ -586,6 +590,12 @@ Mario.Character.prototype.GetHurt = function() {
 Mario.Character.prototype.Win = function() {
     this.XDeathPos = this.X | 0;
     this.YDeathPos = this.Y | 0;
+    var yd = this.Y - this.World.Layer.Ribbon - 10;
+    if (yd < this.Height){
+        this.Score += Math.ceil((Math.sin(this.World.Layer.AnimTime)*10+10)/2 * this.World.TimeLeft);
+    }else{
+        this.Score += 50;
+    }
     this.World.Paused = true;
     this.WinTime = 1;
     Enjine.Resources.PlaySound("exit");
@@ -655,6 +665,7 @@ Mario.Character.prototype.Get1Up = function() {
 };
 
 Mario.Character.prototype.GetCoin = function() {
+    this.Score += 10;
     this.Coins++;
     if (this.Coins === 100) {
         this.Coins = 0;
